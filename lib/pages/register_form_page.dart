@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:srsp4/model/user.dart';
 import 'user_info.dart';
 import 'dart:developer';
@@ -20,12 +21,14 @@ class _RegisterFormPage extends State<RegisterFormPage> {
   final _nameFocus = FocusNode();
   final _secondNameFocus = FocusNode();
   final _emailFocus = FocusNode();
+  final _phoneFocus = FocusNode();
   final _passwordFocus = FocusNode();
   final _confirmPasswordFocus = FocusNode();
 
   final _nameController = TextEditingController();
   final _secondNameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final List<String> _countries = [
@@ -125,6 +128,36 @@ class _RegisterFormPage extends State<RegisterFormPage> {
               keyboardType: TextInputType.emailAddress,
               onSaved: (newValue) => newUser.email = newValue!,
             ),
+            TextFormField(
+              focusNode: _phoneFocus,
+              onFieldSubmitted: (_) {
+                _fieldFocusChange(context, _phoneFocus, _passwordFocus);
+              },
+              controller: _phoneController,
+              decoration: InputDecoration(
+                labelText: 'Your phone',
+                hintText: '(###)###-####',
+                prefixIcon: Icon(Icons.phone),
+                suffixIcon: GestureDetector(
+                  onLongPress: () {
+                    _phoneController.clear();
+                  },
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+              keyboardType: TextInputType.phone,
+              inputFormatters: [
+                FilteringTextInputFormatter(RegExp(r'^[()\d -]{1,15}$'),
+                    allow: true)
+              ],
+              validator: (value) => validatePhoneNumber(value!)
+                  ? null
+                  : 'Phone number must be entered as (###)###-####',
+              onSaved: (newValue) => newUser.phone = newValue!,
+            ),
             SizedBox(height: 10),
             TextFormField(
               focusNode: _passwordFocus,
@@ -133,6 +166,8 @@ class _RegisterFormPage extends State<RegisterFormPage> {
               decoration: InputDecoration(
                 labelText: 'Password *',
                 hintText: 'Create password',
+                helperText:
+                    'one digit, The first letter of the password must be capitalized',
                 prefixIcon: Icon(Icons.password),
                 suffixIcon: IconButton(
                   icon:
@@ -247,14 +282,27 @@ class _RegisterFormPage extends State<RegisterFormPage> {
     }
   }
 
+  bool validatePhoneNumber(String input) {
+    final phoneExp = RegExp(r'^\(\d\d\d\)\d\d\d\-\d\d\d\d$');
+    return phoneExp.hasMatch(input);
+  }
+
   String? validatePassword(String? value) {
-    if (_passwordController.text.length != 10) {
-      return '10 character required for password';
-    } else if (_confirmPasswordController.text != _passwordController.text) {
-      return 'Password doesnt match';
+    if (value == null || value.isEmpty) {
+      return 'passwor required';
     } else {
-      return null;
+      String password = value;
+      if (password.length != 10) {
+        return 'Password length must be 10 characters';
+      } else if (!RegExp(r'\d').hasMatch(password)) {
+        return 'The password must retain at least one digit';
+      } else if (!RegExp(r'[A-Z]').hasMatch(password.substring(0, 1))) {
+        return 'The first letter of the password must be capitalized';
+      } else if (_confirmPasswordController.text != password) {
+        return 'Password doesnt match';
+      }
     }
+    return null;
   }
 
   void _showMessage({required String message}) {

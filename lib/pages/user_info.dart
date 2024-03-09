@@ -33,7 +33,10 @@ class UserInfoPage extends StatelessWidget {
                 userInfo.secondName,
                 style: TextStyle(fontWeight: FontWeight.w400),
               ),
-              leading: Icon(Icons.person_4),
+              leading: Icon(
+                Icons.person_4,
+                color: Colors.black,
+              ),
             ),
             SizedBox(height: 10),
             ListTile(
@@ -43,6 +46,16 @@ class UserInfoPage extends StatelessWidget {
               ),
               leading: Icon(
                 Icons.email,
+                color: Colors.black,
+              ),
+            ),
+            ListTile(
+              title: Text(
+                userInfo.phone,
+                style: TextStyle(fontWeight: FontWeight.w400),
+              ),
+              leading: Icon(
+                Icons.phone,
                 color: Colors.black,
               ),
             ),
