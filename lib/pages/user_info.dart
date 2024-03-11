@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:srsp4/constants/text_style.dart';
 import '/model/user.dart';
 
 class UserInfoPage extends StatelessWidget {
@@ -9,42 +10,45 @@ class UserInfoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Information'),
+        title: const Text(
+          'User Information',
+          style: AppText.texxt,
+        ),
         centerTitle: true,
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ListTile(
               title: Text(
                 userInfo.name,
-                style: TextStyle(fontWeight: FontWeight.w400),
+                style: const TextStyle(fontWeight: FontWeight.w400),
               ),
-              leading: Icon(
+              leading: const Icon(
                 Icons.person_4_outlined,
                 color: Colors.black,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ListTile(
               title: Text(
                 userInfo.secondName,
-                style: TextStyle(fontWeight: FontWeight.w400),
+                style: const TextStyle(fontWeight: FontWeight.w400),
               ),
-              leading: Icon(
+              leading: const Icon(
                 Icons.person_4,
                 color: Colors.black,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ListTile(
               title: Text(
                 userInfo.email,
-                style: TextStyle(fontWeight: FontWeight.w400),
+                style: const TextStyle(fontWeight: FontWeight.w400),
               ),
-              leading: Icon(
+              leading: const Icon(
                 Icons.email,
                 color: Colors.black,
               ),
@@ -52,9 +56,9 @@ class UserInfoPage extends StatelessWidget {
             ListTile(
               title: Text(
                 userInfo.phone,
-                style: TextStyle(fontWeight: FontWeight.w400),
+                style: const TextStyle(fontWeight: FontWeight.w400),
               ),
-              leading: Icon(
+              leading: const Icon(
                 Icons.phone,
                 color: Colors.black,
               ),
@@ -62,9 +66,9 @@ class UserInfoPage extends StatelessWidget {
             ListTile(
               title: Text(
                 userInfo.country,
-                style: TextStyle(fontWeight: FontWeight.w400),
+                style: const TextStyle(fontWeight: FontWeight.w400),
               ),
-              leading: Icon(
+              leading: const Icon(
                 Icons.map,
                 color: Colors.black,
               ),

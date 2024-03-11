@@ -1,7 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:srsp4/constants/colors.dart';
+import 'package:srsp4/constants/text_style.dart';
+import 'package:srsp4/generated/locale_keys.g.dart';
 import 'package:srsp4/model/user.dart';
-import 'user_info.dart';
+import 'package:srsp4/pages/bottom_nav.dart';
 import 'dart:developer';
 
 class RegisterFormPage extends StatefulWidget {
@@ -31,7 +35,7 @@ class _RegisterFormPage extends State<RegisterFormPage> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final List<String> _countries = [
+  final List<String> countries = [
     'Kazakhstan',
     'Russia',
     'Kyrgyzstan',
@@ -48,195 +52,218 @@ class _RegisterFormPage extends State<RegisterFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Registration Form'),
-        centerTitle: true,
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: EdgeInsets.all(16.0),
-          children: [
-            TextFormField(
-              focusNode: _nameFocus,
-              autofocus: true,
-              onFieldSubmitted: (_) {
-                _fieldFocusChange(context, _nameFocus, _secondNameFocus);
+        appBar: AppBar(
+          title: Text(
+            LocaleKeys.registration_form.tr(),
+            style: AppText.texxt,
+          ),
+          centerTitle: true,
+          actions: [
+            DropdownButton<Locale>(
+              value: context.locale,
+              onChanged: (newlocale) {
+                context.setLocale(newlocale!);
               },
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Name',
-                hintText: 'What is your name?',
-                prefixIcon: Icon(Icons.person_4_sharp),
-                suffixIcon: GestureDetector(
-                  onTap: () {
-                    _nameController.clear();
-                  },
-                  child: const Icon(
-                    Icons.delete,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
-              validator: validateName,
-              onSaved: (Value) => newUser.name = Value!,
-            ),
-            SizedBox(height: 10),
-            TextFormField(
-              focusNode: _secondNameFocus,
-              onFieldSubmitted: (_) {
-                _fieldFocusChange(context, _secondNameFocus, _emailFocus);
-              },
-              controller: _secondNameController,
-              decoration: InputDecoration(
-                labelText: 'Second Name',
-                hintText: 'What is your second name',
-                prefixIcon: Icon(Icons.person_4_sharp),
-                suffixIcon: GestureDetector(
-                  onTap: () {
-                    _secondNameController.clear();
-                  },
-                  child: const Icon(
-                    Icons.delete,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
-              validator: validateSecondName,
-              onSaved: (newValue) => newUser.secondName = newValue!,
-            ),
-            SizedBox(height: 10),
-            TextFormField(
-              focusNode: _emailFocus,
-              onFieldSubmitted: (value) {
-                _fieldFocusChange(context, _emailFocus, _passwordFocus);
-              },
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                prefixIcon: Icon(Icons.email),
-                suffixIcon: GestureDetector(
-                  onTap: () {
-                    _emailController.clear();
-                  },
-                  child: const Icon(
-                    Icons.delete,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
-              keyboardType: TextInputType.emailAddress,
-              onSaved: (newValue) => newUser.email = newValue!,
-            ),
-            TextFormField(
-              focusNode: _phoneFocus,
-              onFieldSubmitted: (_) {
-                _fieldFocusChange(context, _phoneFocus, _passwordFocus);
-              },
-              controller: _phoneController,
-              decoration: InputDecoration(
-                labelText: 'Your phone',
-                hintText: '(###)###-####',
-                prefixIcon: Icon(Icons.phone),
-                suffixIcon: GestureDetector(
-                  onLongPress: () {
-                    _phoneController.clear();
-                  },
-                  child: Icon(
-                    Icons.delete,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
-              keyboardType: TextInputType.phone,
-              inputFormatters: [
-                FilteringTextInputFormatter(RegExp(r'^[()\d -]{1,15}$'),
-                    allow: true)
-              ],
-              validator: (value) => validatePhoneNumber(value!)
-                  ? null
-                  : 'Phone number must be entered as (###)###-####',
-              onSaved: (newValue) => newUser.phone = newValue!,
-            ),
-            SizedBox(height: 10),
-            TextFormField(
-              focusNode: _passwordFocus,
-              controller: _passwordController,
-              maxLength: 10,
-              decoration: InputDecoration(
-                labelText: 'Password *',
-                hintText: 'Create password',
-                helperText:
-                    'one digit, The first letter of the password must be capitalized',
-                prefixIcon: Icon(Icons.password),
-                suffixIcon: IconButton(
-                  icon:
-                      Icon(_hidePass ? Icons.visibility : Icons.visibility_off),
-                  onPressed: () {
-                    setState(() {
-                      _hidePass = !_hidePass;
-                    });
-                  },
-                ),
-              ),
-              validator: validatePassword,
-              obscureText: _hidePass,
-            ),
-            SizedBox(height: 10),
-            TextFormField(
-              focusNode: _confirmPasswordFocus,
-              controller: _confirmPasswordController,
-              obscureText: _hidePass,
-              maxLength: 10,
-              decoration: const InputDecoration(
-                labelText: 'Confirm Password *',
-                hintText: 'Confirm the password',
-                icon: Icon(Icons.border_color),
-              ),
-              validator: validatePassword,
-            ),
-            SizedBox(height: 10),
-            DropdownButtonFormField(
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  icon: Icon(Icons.map),
-                  labelText: 'Country'),
-              items: _countries.map((country) {
-                return DropdownMenuItem(
-                  value: country,
-                  child: Text(country),
+              items: context.supportedLocales.map((Locale locale) {
+                return DropdownMenuItem<Locale>(
+                  value: locale,
+                  child: Text(locale.languageCode.toUpperCase()),
                 );
               }).toList(),
-              onChanged: (country) {
-                setState(() {
-                  _selectedCountry = country as String;
-                  newUser.country = country;
-                });
-              },
-              value: _selectedCountry,
-            ),
-            SizedBox(height: 70),
-            ElevatedButton(
-              onPressed: _submitForm,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-              ),
-              child: Text(
-                'Register',
-                style: TextStyle(color: Colors.white),
-              ),
             ),
           ],
         ),
-      ),
-    );
+        body: Builder(builder: (BuildContext context) {
+          return Form(
+            key: _formKey,
+            child: ListView(
+              padding: const EdgeInsets.all(16.0),
+              children: [
+                TextFormField(
+                  focusNode: _nameFocus,
+                  autofocus: true,
+                  onFieldSubmitted: (_) {
+                    _fieldFocusChange(context, _nameFocus, _secondNameFocus);
+                  },
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: LocaleKeys.name.tr(),
+                    hintText: LocaleKeys.what_is_your_name.tr(),
+                    prefixIcon: const Icon(Icons.person_4_sharp,
+                        color: AppColors.icons),
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        _nameController.clear();
+                      },
+                      child: const Icon(
+                        Icons.delete,
+                        color: AppColors.error,
+                      ),
+                    ),
+                  ),
+                  validator: validateName,
+                  onSaved: (newValue) => newUser.secondName = newValue!,
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  focusNode: _secondNameFocus,
+                  onFieldSubmitted: (_) {
+                    _fieldFocusChange(context, _secondNameFocus, _emailFocus);
+                  },
+                  controller: _secondNameController,
+                  decoration: InputDecoration(
+                    labelText: LocaleKeys.second_name.tr(),
+                    hintText: LocaleKeys.what_is_your_second_name.tr(),
+                    prefixIcon: const Icon(Icons.person_4_sharp,
+                        color: AppColors.icons),
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        _secondNameController.clear();
+                      },
+                      child: const Icon(
+                        Icons.delete,
+                        color: AppColors.error,
+                      ),
+                    ),
+                  ),
+                  validator: validateSecondName,
+                  onSaved: (newValue) => newUser.secondName = newValue!,
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  focusNode: _emailFocus,
+                  onFieldSubmitted: (value) {
+                    _fieldFocusChange(context, _emailFocus, _passwordFocus);
+                  },
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: LocaleKeys.email.tr(),
+                    prefixIcon: const Icon(Icons.email, color: AppColors.icons),
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        _emailController.clear();
+                      },
+                      child: const Icon(
+                        Icons.delete,
+                        color: AppColors.error,
+                      ),
+                    ),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  onSaved: (newValue) => newUser.email = newValue!,
+                ),
+                TextFormField(
+                  focusNode: _phoneFocus,
+                  onFieldSubmitted: (_) {
+                    _fieldFocusChange(context, _phoneFocus, _passwordFocus);
+                  },
+                  controller: _phoneController,
+                  decoration: InputDecoration(
+                    labelText: LocaleKeys.your_phone.tr(),
+                    hintText: '(###)###-####',
+                    prefixIcon: const Icon(Icons.phone, color: AppColors.icons),
+                    suffixIcon: GestureDetector(
+                      onLongPress: () {
+                        _phoneController.clear();
+                      },
+                      child: const Icon(
+                        Icons.delete,
+                        color: AppColors.error,
+                      ),
+                    ),
+                  ),
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: [
+                    FilteringTextInputFormatter(RegExp(r'^[()\d -]{1,15}$'),
+                        allow: true)
+                  ],
+                  validator: (value) => validatePhoneNumber(value!)
+                      ? null
+                      : LocaleKeys.phone_number_must_be_entered_as.tr(),
+                  onSaved: (newValue) => newUser.phone = newValue!,
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  focusNode: _passwordFocus,
+                  controller: _passwordController,
+                  maxLength: 10,
+                  decoration: InputDecoration(
+                    labelText: LocaleKeys.password.tr(),
+                    hintText: LocaleKeys.create_password.tr(),
+                    helperText: LocaleKeys
+                        .one_digit_the_first_letter_of_the_password_must_be_capitalized
+                        .tr(),
+                    prefixIcon:
+                        const Icon(Icons.password, color: AppColors.icons),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                          _hidePass ? Icons.visibility : Icons.visibility_off),
+                      onPressed: () {
+                        setState(() {
+                          _hidePass = !_hidePass;
+                        });
+                      },
+                    ),
+                  ),
+                  validator: validatePassword,
+                  obscureText: _hidePass,
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  focusNode: _confirmPasswordFocus,
+                  controller: _confirmPasswordController,
+                  obscureText: _hidePass,
+                  maxLength: 10,
+                  decoration: InputDecoration(
+                    labelText: LocaleKeys.confirm_password.tr(),
+                    hintText: LocaleKeys.confirm_password.tr(),
+                    icon:
+                        const Icon(Icons.border_color, color: AppColors.icons),
+                  ),
+                  validator: validatePassword,
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField(
+                  decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      icon: const Icon(Icons.map, color: AppColors.icons),
+                      labelText: LocaleKeys.country.tr()),
+                  items: countries.map((country) {
+                    return DropdownMenuItem(
+                      value: country,
+                      child: Text(tr(country)),
+                    );
+                  }).toList(),
+                  onChanged: (country) {
+                    setState(() {
+                      _selectedCountry = country as String;
+                      newUser.country = country;
+                    });
+                  },
+                  value: _selectedCountry,
+                ),
+                const SizedBox(height: 70),
+                ElevatedButton(
+                  onPressed: _submitForm,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.done,
+                  ),
+                  child: Text(
+                    LocaleKeys.register.tr(),
+                    style: const TextStyle(color: AppColors.textColor),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }));
   }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       if (_selectedCountry.isEmpty) {
-        _selectedCountry = 'Kazakhstan';
+        _selectedCountry = LocaleKeys.countries.tr();
       }
       _showDialog(name: _nameController.text);
       log('Name: ${_nameController.text}');
@@ -244,16 +271,17 @@ class _RegisterFormPage extends State<RegisterFormPage> {
       log('Email: ${_emailController.text}');
       log('Country: $_selectedCountry');
     } else {
-      _showMessage(message: 'Form is not valid! Please review and correct');
+      _showMessage(
+          message: LocaleKeys.form_is_not_valid_please_review_and_correct.tr());
     }
   }
 
   String? validateName(String? value) {
     final nameExp = RegExp(r'^[A-Za-z ]+$');
     if (value == null) {
-      return 'Name is required.';
+      return LocaleKeys.name_is_required.tr();
     } else if (!nameExp.hasMatch(value)) {
-      return 'Please enter alphabetical characters.';
+      return LocaleKeys.please_enter_alphabetical_characters.tr();
     } else {
       return null;
     }
@@ -262,9 +290,9 @@ class _RegisterFormPage extends State<RegisterFormPage> {
   String? validateSecondName(String? value) {
     final nameExp = RegExp(r'^[A-Za-z ]+$');
     if (value == null) {
-      return 'Second name is required.';
+      return LocaleKeys.second_name_is_required.tr();
     } else if (!nameExp.hasMatch(value)) {
-      return 'Please enter alphabetical characters.';
+      return LocaleKeys.please_enter_alphabetical_characters.tr();
     } else {
       return null;
     }
@@ -274,9 +302,9 @@ class _RegisterFormPage extends State<RegisterFormPage> {
     String? value,
   ) {
     if (value == null) {
-      return 'Cannot be empty';
+      return LocaleKeys.cannot_be_empty.tr();
     } else if (!_emailController.text.contains('@')) {
-      return 'Invalid email address';
+      return LocaleKeys.invalid_email_address.tr();
     } else {
       return null;
     }
@@ -289,17 +317,17 @@ class _RegisterFormPage extends State<RegisterFormPage> {
 
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'passwor required';
+      return LocaleKeys.password_required.tr();
     } else {
       String password = value;
       if (password.length != 10) {
-        return 'Password length must be 10 characters';
+        return LocaleKeys.password_length_must_be_characters.tr();
       } else if (!RegExp(r'\d').hasMatch(password)) {
-        return 'The password must retain at least one digit';
+        return LocaleKeys.the_password_must_retain_at_least_one_digit.tr();
       } else if (!RegExp(r'[A-Z]').hasMatch(password.substring(0, 1))) {
-        return 'The first letter of the password must be capitalized';
+        return LocaleKeys.the_first_letter_of_the_password_must_be_capitalized;
       } else if (_confirmPasswordController.text != password) {
-        return 'Password doesnt match';
+        return LocaleKeys.password_doesnt_match;
       }
     }
     return null;
@@ -307,16 +335,9 @@ class _RegisterFormPage extends State<RegisterFormPage> {
 
   void _showMessage({required String message}) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      duration: Duration(seconds: 1),
-      backgroundColor: Colors.red,
-      content: Text(
-        message,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-          fontSize: 18.0,
-        ),
-      ),
+      duration: const Duration(seconds: 1),
+      backgroundColor: AppColors.error,
+      content: Text(message, style: AppText.texxt),
     ));
   }
 
@@ -325,19 +346,10 @@ class _RegisterFormPage extends State<RegisterFormPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text(
-            'Registration successful',
-            style: TextStyle(
-              color: Colors.green,
-            ),
-          ),
-          content: Text(
-            '$name is now a verified register form',
-            style: const TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 18.0,
-            ),
-          ),
+          title: Text(LocaleKeys.registration_successful.tr(),
+              style: TextDone.done),
+          content:
+              Text('$name is now a verified register', style: AppText.texxt),
           actions: [
             TextButton(
               onPressed: () {
@@ -345,19 +357,11 @@ class _RegisterFormPage extends State<RegisterFormPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => UserInfoPage(
-                      userInfo: newUser,
-                    ),
+                    builder: (context) => const BottomBarPage(),
                   ),
                 );
               },
-              child: const Text(
-                'Verified',
-                style: TextStyle(
-                  color: Colors.green,
-                  fontSize: 18.0,
-                ),
-              ),
+              child: Text(LocaleKeys.verified.tr(), style: TextDone.done),
             ),
           ],
         );

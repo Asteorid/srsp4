@@ -1,0 +1,37 @@
+{
+    "registration_form": "Registration Form",
+    "name": "Name",
+    "what_is_your_name": "What is your name?",
+    "second_name": "Second name",
+    "what_is_your_second_name": "What is your second name?",
+    "email": "Email",
+    "your_phone": "Your Phone",
+    "phone_number_must_be_entered_as" :"Phone number must be entered as (###)###-####",
+    "password": "Password",
+    "create_password": "Create password",
+    "one_digit_the_first_letter_of_the_password_must_be_capitalized" : "one digit, The first letter of the password must be capitalized",
+    "confirm_password" : "Confirm Password *",
+    "country" : "Country",
+    "countries" : [
+        "Kazakhstan",
+        "Russia",
+        "Kyrgyzstan",
+        "Uzbekistan"
+    ],
+    "register" : "Register",
+    "form_is_not_valid_please_review_and_correct" : "Form is not valid! Please review and correct",
+    "name_is_required" : "Name is required.",
+    "please_enter_alphabetical_characters" : "Please enter alphabetical characters.",
+    "second_name_is_required" : "Second name is required.",
+    "cannot_be_empty" : "Cannot be empty",
+    "invalid_email_address" : "Invalid email address",
+    "password_required" : "password required",
+    "password_length_must_be_characters" : "Password length must be 10 characters",
+    "the_password_must_retain_at_least_one_digit" : "The password must retain at least one digit",
+    "the_first_letter_of_the_password_must_be_capitalized" : "The first letter of the password must be capitalized",
+    "password_doesnt_match" : "Password doesnt match",
+    "registration_successful" : "Registration successful",
+    "is_now_a_verified_register_form" : "is now a verified register form",
+    "verified" : "Verified"
+
+}

@@ -1,5 +1,5 @@
 class User {
-  late String name;
+  late final String name;
   late String secondName;
   late String email;
   late String phone;
