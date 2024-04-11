@@ -1,10 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:srsp4/constants/text_style.dart';
+import 'package:srsp4/register_login/bloc/login_bloc.dart';
+import 'package:srsp4/services/shared_pref.dart';
 import '/model/user.dart';
 
-class UserInfoPage extends StatelessWidget {
+class UserInfoPage extends StatefulWidget {
   final User userInfo;
   const UserInfoPage({Key? key, required this.userInfo}) : super(key: key);
+
+  @override
+  State<UserInfoPage> createState() => _UserInfoPageState();
+}
+
+class _UserInfoPageState extends State<UserInfoPage> {
+  late LoginBloc loginBloc;
+  String? name = sharedPreference.getName;
+  String? secondName = sharedPreference.getSecondName;
+  String? email = sharedPreference.getEmail;
+  String? phone = sharedPreference.getPhone;
+  String? country = sharedPreference.getCountry;
+
+  @override
+  void initState() {
+    loginBloc = LoginBloc();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +43,7 @@ class UserInfoPage extends StatelessWidget {
           children: [
             ListTile(
               title: Text(
-                userInfo.name,
+                name ?? "",
                 style: const TextStyle(fontWeight: FontWeight.w400),
               ),
               leading: const Icon(
@@ -34,7 +54,7 @@ class UserInfoPage extends StatelessWidget {
             const SizedBox(height: 10),
             ListTile(
               title: Text(
-                userInfo.secondName,
+                secondName ?? "",
                 style: const TextStyle(fontWeight: FontWeight.w400),
               ),
               leading: const Icon(
@@ -45,7 +65,7 @@ class UserInfoPage extends StatelessWidget {
             const SizedBox(height: 10),
             ListTile(
               title: Text(
-                userInfo.email,
+                email ?? "",
                 style: const TextStyle(fontWeight: FontWeight.w400),
               ),
               leading: const Icon(
@@ -55,7 +75,7 @@ class UserInfoPage extends StatelessWidget {
             ),
             ListTile(
               title: Text(
-                userInfo.phone,
+                phone ?? "",
                 style: const TextStyle(fontWeight: FontWeight.w400),
               ),
               leading: const Icon(
@@ -65,7 +85,7 @@ class UserInfoPage extends StatelessWidget {
             ),
             ListTile(
               title: Text(
-                userInfo.country,
+                country ?? "",
                 style: const TextStyle(fontWeight: FontWeight.w400),
               ),
               leading: const Icon(

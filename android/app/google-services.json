@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "979021529271",
+    "firebase_url": "https://instunder-ea325-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "instunder-ea325",
+    "storage_bucket": "instunder-ea325.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:979021529271:android:1eb7c3381a1ff2ac17cd32",
+        "android_client_info": {
+          "package_name": "com.example.srsp4"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAoQcIXHvlZjZaeQkSWvDKoBiT_WveVCY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -3,23 +3,25 @@ import 'package:srsp4/constants/text_style.dart';
 import 'package:srsp4/model/user.dart';
 import 'package:srsp4/pages/first_page.dart';
 import 'package:srsp4/pages/fourth_page.dart';
-import 'package:srsp4/pages/second_page.dart';
+import 'package:srsp4/json_page/second_page.dart';
 import 'package:srsp4/pages/third_page.dart';
-import 'package:srsp4/pages/user_info.dart';
 
 class BottomBarPage extends StatefulWidget {
-  const BottomBarPage({super.key});
+  const BottomBarPage({Key? key}) : super(key: key);
 
   @override
   _BottomBarPageState createState() => _BottomBarPageState();
 }
 
 class _BottomBarPageState extends State<BottomBarPage> {
+  User newUser = User();
   int pageIndex = 0;
   final pages = [
     const FirstPage(),
-    const SecondPage(),
-    const ThirdPage(),
+    SecondPage(
+      postId: 1,
+    ),
+    ThirdPage(),
     const FourthPage()
   ];
 

@@ -1,12 +1,19 @@
+// import 'dart:convert';
+
+import 'dart:convert';
+
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:srsp4/constants/colors.dart';
 import 'package:srsp4/constants/text_style.dart';
 import 'package:srsp4/generated/locale_keys.g.dart';
 import 'package:srsp4/model/user.dart';
-import 'package:srsp4/pages/bottom_nav.dart';
+import 'package:srsp4/navigation/bottom_nav.dart';
 import 'dart:developer';
+import 'package:srsp4/services/shared_pref.dart';
+import 'package:http/http.dart' as http;
 
 class RegisterFormPage extends StatefulWidget {
   const RegisterFormPage({Key? key}) : super(key: key);
@@ -19,6 +26,8 @@ class _RegisterFormPage extends State<RegisterFormPage> {
   bool _hidePass = true;
 
   User newUser = User();
+
+  final databaseReference = FirebaseDatabase.instance.ref('Users');
 
   final _formKey = GlobalKey<FormState>();
 
@@ -61,8 +70,9 @@ class _RegisterFormPage extends State<RegisterFormPage> {
           actions: [
             DropdownButton<Locale>(
               value: context.locale,
-              onChanged: (newlocale) {
+              onChanged: (newlocale) async {
                 context.setLocale(newlocale!);
+                await sharedPreference.saveLanguage(newlocale.languageCode);
               },
               items: context.supportedLocales.map((Locale locale) {
                 return DropdownMenuItem<Locale>(
@@ -133,7 +143,7 @@ class _RegisterFormPage extends State<RegisterFormPage> {
                 TextFormField(
                   focusNode: _emailFocus,
                   onFieldSubmitted: (value) {
-                    _fieldFocusChange(context, _emailFocus, _passwordFocus);
+                    _fieldFocusChange(context, _emailFocus, _phoneFocus);
                   },
                   controller: _emailController,
                   decoration: InputDecoration(
@@ -185,6 +195,10 @@ class _RegisterFormPage extends State<RegisterFormPage> {
                 const SizedBox(height: 10),
                 TextFormField(
                   focusNode: _passwordFocus,
+                  onFieldSubmitted: (_) {
+                    _fieldFocusChange(
+                        context, _passwordFocus, _confirmPasswordFocus);
+                  },
                   controller: _passwordController,
                   maxLength: 10,
                   decoration: InputDecoration(
@@ -246,7 +260,7 @@ class _RegisterFormPage extends State<RegisterFormPage> {
                 ElevatedButton(
                   onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.done,
+                    backgroundColor: Colors.blue[400],
                   ),
                   child: Text(
                     LocaleKeys.register.tr(),
@@ -259,9 +273,32 @@ class _RegisterFormPage extends State<RegisterFormPage> {
         }));
   }
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+//       databaseReference.child('user').push().set({
+//   'name': _nameController.text.toString(),
+//   'secondName': _secondNameController.text.toString(),
+//   'email': _emailController.text.toString(),
+//   'phone': _phoneController.text.toString(),
+//   'country': _selectedCountry.toString(),
+// }).then((_) {
+//   print("Data saved successfully");
+// }).catchError((error) {
+//   print("Failed to save data: $error");
+// });
+
+      const url =
+          'https://instunder-ea325-default-rtdb.asia-southeast1.firebasedatabase.app/user.json';
+      http.post(Uri.parse(url),
+          body: jsonEncode({
+            'name': _nameController.text.toString(),
+            'secondName': _secondNameController.text.toString(),
+            'email': _emailController.text.toString(),
+            'phone': _phoneController.text.toString(),
+            'country': _selectedCountry.toString(),
+          }));
+
       if (_selectedCountry.isEmpty) {
         _selectedCountry = LocaleKeys.countries.tr();
       }
@@ -270,6 +307,11 @@ class _RegisterFormPage extends State<RegisterFormPage> {
       log('Second Name: ${_secondNameController.text}');
       log('Email: ${_emailController.text}');
       log('Country: $_selectedCountry');
+      sharedPreference.saveName(_nameController.text);
+      sharedPreference.saveSecondName(_secondNameController.text);
+      sharedPreference.saveEmail(_emailController.text);
+      sharedPreference.savePhone(_phoneController.text);
+      sharedPreference.saveCountry(_selectedCountry);
     } else {
       _showMessage(
           message: LocaleKeys.form_is_not_valid_please_review_and_correct.tr());
@@ -348,17 +390,18 @@ class _RegisterFormPage extends State<RegisterFormPage> {
         return AlertDialog(
           title: Text(LocaleKeys.registration_successful.tr(),
               style: TextDone.done),
-          content:
-              Text('$name is now a verified register', style: AppText.texxt),
+          content: Text(
+              '$name ${LocaleKeys.is_now_a_verified_register_form.tr()}',
+              style: AppText.texxt),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(
+                Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
                     builder: (context) => const BottomBarPage(),
                   ),
+                  (route) => false,
                 );
               },
               child: Text(LocaleKeys.verified.tr(), style: TextDone.done),

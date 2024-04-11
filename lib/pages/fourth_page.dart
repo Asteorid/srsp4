@@ -15,9 +15,10 @@ class _FourthPageState extends State<FourthPage> {
   Widget build(BuildContext context) {
     return Center(
       child: TextButton(
-        child: Text('show my info'),
+        child: const Text(
+          'show my info',
+        ),
         onPressed: () {
-          Navigator.pop(context);
           Navigator.push(
               context,
               MaterialPageRoute(
